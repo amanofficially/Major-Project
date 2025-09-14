@@ -22,7 +22,7 @@ It helps administrators and faculty members save time by generating conflict-fre
 ---
 
 ## 🖼️ Preview
-![Quick Schedule Screenshot](hero.webp)
+![Quick Schedule Screenshot]([hero.webp](https://major-project-ashen-mu.vercel.app/))
 
 ---
 
