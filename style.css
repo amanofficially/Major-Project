@@ -185,6 +185,20 @@ header {
     display: flex;
 }
 
+/* New: Mobile Navigation Logo */
+.nav-logo-mobile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 1rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.nav-logo-image {
+    width: 100px;
+    height: auto;
+}
+
 .nav-menu ul {
     list-style: none;
     text-align: center;
@@ -219,6 +233,10 @@ header {
 /* Desktop Navigation & Header */
 @media (min-width: 768px) {
     .menu-toggle {
+        display: none;
+    }
+
+    .nav-logo-mobile {
         display: none;
     }
 
