@@ -1,21 +1,100 @@
+/**
+ * Quick Schedule - Main JavaScript File
+ *
+ * This script handles all interactive elements of the Quick Schedule landing page,
+ * including mobile menu toggles, modal pop-ups for login/signup,
+ * form validation, and scroll-based animations.
+ */
 document.addEventListener('DOMContentLoaded', function () {
-    // Mobile menu toggle logic
+    // --- DOM ELEMENT SELECTION ---
+    // Navigation elements
     const menuToggle = document.getElementById('menu-toggle');
     const navMenu = document.querySelector('.nav-menu');
     const authButtonsDesktop = document.querySelector('.auth-buttons-desktop');
+    const heroAuthButtonsMobile = document.querySelector('.hero-auth-buttons-mobile');
 
+    // Modal elements and their triggers
+    const loginModal = document.getElementById('login-modal');
+    const signupModal = document.getElementById('signup-modal');
+    const showLoginBtns = document.querySelectorAll('#show-login-desktop, #show-login-mobile-hero');
+    const showSignupBtns = document.querySelectorAll('#show-signup-desktop, #show-signup-mobile-hero');
+    const closeBtns = document.querySelectorAll('.close-btn');
+
+    // Form elements and error message displays
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const loginError = document.getElementById('login-error');
+    const signupError = document.getElementById('signup-error');
+
+    // Sections for scroll-based animations
+    const sections = document.querySelectorAll('section');
+
+
+    // --- UTILITY FUNCTIONS ---
+    /**
+     * Opens a modal and prevents background scrolling.
+     * @param {HTMLElement} modal - The modal element to open.
+     */
+    const openModal = (modal) => {
+        modal.classList.add('is-active');
+        document.body.classList.add('no-scroll');
+    };
+
+    /**
+     * Closes a modal and re-enables background scrolling.
+     * Also resets the forms within the modal.
+     * @param {HTMLElement} modal - The modal element to close.
+     */
+    const closeModal = (modal) => {
+        modal.classList.remove('is-active');
+        document.body.classList.remove('no-scroll');
+        resetForms();
+    };
+
+    /**
+     * Resets form fields and clears any error messages.
+     */
+    const resetForms = () => {
+        if (loginForm) loginForm.reset();
+        if (signupForm) signupForm.reset();
+        if (loginError) loginError.textContent = '';
+        if (signupError) signupError.textContent = '';
+    };
+
+    /**
+     * Manages the visibility of navigation elements based on screen size.
+     */
+    const setNavState = () => {
+        if (window.innerWidth >= 768) {
+            // Desktop view: hides mobile-specific elements and shows desktop ones
+            navMenu.classList.remove('is-active');
+            navMenu.style.display = 'flex';
+            authButtonsDesktop.style.display = 'flex';
+            menuToggle.style.display = 'none';
+            heroAuthButtonsMobile.style.display = 'none'; // Ensure mobile hero buttons are hidden
+            document.body.classList.remove('no-scroll');
+        } else {
+            // Mobile view: shows mobile-specific elements and hides desktop ones
+            navMenu.style.display = '';
+            menuToggle.style.display = 'block';
+            authButtonsDesktop.style.display = 'none';
+            heroAuthButtonsMobile.style.display = 'flex'; // Ensure mobile hero buttons are visible
+        }
+    };
+
+
+    // --- EVENT LISTENERS ---
+
+    // Mobile menu toggle logic
     menuToggle.addEventListener('click', () => {
-        // Toggles the 'is-active' class on the nav menu to show/hide it
         navMenu.classList.toggle('is-active');
-        // Changes the icon between bars and times (X)
         const menuIcon = menuToggle.querySelector('i');
         menuIcon.classList.toggle('fa-bars');
         menuIcon.classList.toggle('fa-times');
-        // Prevents background scrolling when the menu is open
         document.body.classList.toggle('no-scroll');
     });
 
-    // Closes the mobile menu when a navigation link is clicked
+    // Close mobile menu when a navigation link is clicked
     document.querySelectorAll('.nav-menu a').forEach(link => {
         link.addEventListener('click', () => {
             navMenu.classList.remove('is-active');
@@ -26,62 +105,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Handles the display of navigation elements based on screen size
-    const setNavState = () => {
-        if (window.innerWidth >= 768) {
-            // Desktop view: hides mobile menu and shows desktop buttons
-            navMenu.classList.remove('is-active');
-            navMenu.style.display = 'flex';
-            authButtonsDesktop.style.display = 'flex';
-            menuToggle.style.display = 'none';
-            document.body.classList.remove('no-scroll');
-        } else {
-            // Mobile view: shows mobile toggle and hides desktop buttons
-            navMenu.style.display = '';
-            menuToggle.style.display = 'block';
-            authButtonsDesktop.style.display = 'none';
-        }
-    };
-
+    // Handle initial navigation state and state on window resize
     window.addEventListener('resize', setNavState);
     setNavState();
 
-    // Modal elements and button selectors
-    const loginModal = document.getElementById('login-modal');
-    const signupModal = document.getElementById('signup-modal');
-    const showLoginBtns = document.querySelectorAll('#show-login-desktop, #show-login-mobile-hero');
-    const showSignupBtns = document.querySelectorAll('#show-signup-desktop, #show-signup-mobile-hero');
-    const closeBtns = document.querySelectorAll('.close-btn');
-
-    // Form elements and error messages
-    const loginForm = document.getElementById('login-form');
-    const signupForm = document.getElementById('signup-form');
-    const loginError = document.getElementById('login-error');
-    const signupError = document.getElementById('signup-error');
-
-    // Function to open a modal
-    function openModal(modal) {
-        modal.classList.add('is-active');
-        document.body.classList.add('no-scroll');
-    }
-
-    // Function to close a modal
-    function closeModal(modal) {
-        modal.classList.remove('is-active');
-        document.body.classList.remove('no-scroll');
-        resetForms();
-    }
-
-    // Function to reset form fields and error messages
-    function resetForms() {
-        if (loginForm) loginForm.reset();
-        if (signupForm) signupForm.reset();
-        if (loginError) loginError.textContent = '';
-        if (signupError) signupError.textContent = '';
-    }
-
     // Intersection Observer for scroll animations
-    const sections = document.querySelectorAll('section');
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -100,10 +128,6 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.addEventListener('click', () => {
             closeModal(signupModal);
             openModal(loginModal);
-            navMenu.classList.remove('is-active');
-            const menuIcon = menuToggle.querySelector('i');
-            menuIcon.classList.remove('fa-times');
-            menuIcon.classList.add('fa-bars');
         });
     });
 
@@ -111,14 +135,10 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.addEventListener('click', () => {
             closeModal(loginModal);
             openModal(signupModal);
-            navMenu.classList.remove('is-active');
-            const menuIcon = menuToggle.querySelector('i');
-            menuIcon.classList.remove('fa-times');
-            menuIcon.classList.add('fa-bars');
         });
     });
 
-    // Event listeners to close modals when the 'x' button is clicked
+    // Event listeners to close modals via the 'x' button
     closeBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             const modal = btn.closest('.modal');
@@ -133,6 +153,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+
+    // --- FORM SUBMISSION HANDLERS ---
+
     // Handle Login Form Submission
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -140,11 +163,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const password = document.getElementById('login-password').value;
         const userType = document.getElementById('user-type-login').value;
 
-        if (email === '' || password === '') {
+        if (!email || !password) {
             loginError.textContent = 'Please fill in all fields.';
             return;
         }
 
+        // Simple validation for demonstration purposes
         if (email === 'admin@quick.com' && password === 'admin123' && userType === 'admin') {
             alert('Admin Login Successful! 🎉');
             closeModal(loginModal);
@@ -164,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const password = document.getElementById('signup-password').value;
         const userType = document.getElementById('user-type-signup').value;
 
-        if (name === '' || email === '' || password === '') {
+        if (!name || !email || !password) {
             signupError.textContent = 'Please fill in all fields.';
             return;
         }
